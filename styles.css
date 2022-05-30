@@ -1,0 +1,39 @@
+*,
+::before,
+::after {
+    box-sizing: border-box;
+}
+
+img { width: 100%; }
+
+ul { list-style: none; }
+
+.logo {
+    display: flex;
+}
+
+.brand-logo {
+    max-width: 40px;
+}
+
+.navbar {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 0.5rem 1rem;
+    width: 100%;
+}
+
+.navbar-nav {
+    margin-left: auto;
+}
+
+.nav-links {
+    display: flex;
+}
+
+.nav-links .nav-item {
+    padding: 18px;
+    font-size: 15px;
+    line-height: 26px;
+    cursor: pointer;
+}
