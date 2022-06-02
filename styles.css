@@ -104,7 +104,7 @@ ul { list-style: none; }
     outline: none;
 }
 
-.favorite-container.is-visible {
+.favorite-section.is-visible {
     position: fixed;
     top: 0;
     bottom: 0;
@@ -126,6 +126,11 @@ ul { list-style: none; }
     justify-content: space-between;
     width: 80%;
     margin: 0 auto;
+}
+
+.favorite-container {
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .main-parks {
@@ -155,6 +160,10 @@ ul { list-style: none; }
      max-width: 420px;
      margin: 0.5rem 1.5rem;
  }
+
+ .park-card.hidden { display: none; }
+
+ .park-card.is-visible { display: block; }
 
 .img-wrapper {
     max-height: 250px;
@@ -190,6 +199,9 @@ ul { list-style: none; }
 .park-text button i:hover {
     color: rgba(55, 55, 55, 1)
 }
+
+button .fa-heart.favorite,
+button .fa-heart.favorite:hover { color: red; }
 
 .park-modal {
     position: fixed;

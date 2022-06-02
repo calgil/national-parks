@@ -15,31 +15,44 @@ const modalClose = '[data-close]';
 const heart = 'fa-heart';
 const favorite = 'favorite';
 const favButton = '[data-favorite]';
-const favoriteContainer = '.favorite-container';
+const favoriteSection = '.favorite-section';
 const favoriteHeader = '.fav-header';
+const favoriteContainer = '.favorite-container';
 
 const stateSelect = document.querySelector(select);
 const mainContainer = document.querySelector(parksContainer);
 const modalContainer = document.querySelector(modal);
 
 const favOpen = document.querySelector(favButton);
-const favContainer = document.querySelector(favoriteContainer);
+const favPage = document.querySelector(favoriteSection);
 const favHeader = document.querySelector(favoriteHeader);
 const favClose = document.querySelector('.close');
+const favContainer = document.querySelector(favoriteContainer);
 
 let parks = [];
 let favParks = [];
+let favoriteIds = [];
 
+const displayFavParks = (show) => {
+    const favParks = favContainer.children
+    for(const park of favParks) {
+        show
+        ? (park.classList.add(isVisible), park.classList.remove(hidden))
+        : (park.classList.remove(isVisible), park.classList.add(hidden))
+    }
+}
 
 
 favClose.addEventListener('click', () => {
-    [favContainer, favHeader].map((elm) => elm.classList.remove(isVisible));
-    [favContainer, favHeader].map((elm) => elm.classList.add(hidden));
+    [favPage, favHeader].map((elm) => elm.classList.remove(isVisible));
+    [favPage, favHeader].map((elm) => elm.classList.add(hidden));
+    displayFavParks(false);
 })
 
 favOpen.addEventListener('click', () => {
-    [favContainer, favHeader].map((elm) => elm.classList.add(isVisible));
-    [favContainer, favHeader].map((elm) => elm.classList.remove(hidden));
+    [favPage, favHeader].map((elm) => elm.classList.add(isVisible));
+    [favPage, favHeader].map((elm) => elm.classList.remove(hidden));
+    displayFavParks(true);
 })
 
 const findPark = (parkId, array) => {
@@ -47,28 +60,40 @@ const findPark = (parkId, array) => {
     return park
 }
 
-const addToFavorites = (parkId) => {
+const addToFavorites = (park) => {
+    // console.log(park);
+    favParks.push(park);
+    favoriteIds.push(park.id);
+    renderDOM(favParks, favContainer)
+
+}
+
+const addToFavoritesCheck = (parkId) => {
     const park = findPark(parkId, parks);
-    // I want to push these parks to another array, assuming that array does not already have have this park
-    // const parkIdentity = park.id += 'fav';
-    // console.log('add', findPark(park.id, favParks));
-    // const duplicate = findPark(park.id, favParks) 
-    // duplicate === undefined
-    findPark(parkIdentity, favParks) === undefined
-    ? favParks.push(park)
-    : console.log('duplicate');
+    favoriteIds.includes(park.id)
+    ? console.log('duplicate')
+    : addToFavorites(park)
 
-    // favParks.map((park) => park.id += 'fav');
+    // renderDOM(favParks, favContainer);
 
-    console.log('favs', favParks);
+    // with an array of the ids I should be able to either push those parks into a new array and call renderDOM 
+    // to create the parks in favorites, or I could use cloneNode to make a new one, and push that into an array
+
+    
+
+    console.log('favs', favoriteIds);
+    console.log('parks', favParks);
 }
 
 const handleFavorite = (elm) => {
     const parkId = elm.dataset.open;
-    elm.className.includes(favorite)
-    ? console.log('remove from fav') 
-    : addToFavorites(parkId)
-    // console.log('favorite', parkId);
+    const hearts = elm.children
+    for(const heart of hearts) {
+        heart.className.includes(favorite)
+        ? (console.log('remove from favorites'), heart.classList.remove(favorite))
+        : (addToFavoritesCheck(parkId), heart.classList.add(favorite))
+    }
+
 }
 
 const getFavoriteData = (elm) => {
@@ -145,14 +170,23 @@ const handleParkClick = () => {
     })
 }
 
-const renderDOM = (array) => {
-    mainContainer.innerHTML = '';
+const renderDOM = (array, container) => {
+    container.innerHTML = '';
     array.forEach((park) => {
         const {id, fullName} = park;
         const {altText, url} =park.images[0];
         const parkCard = document.createElement('div');
-        parkCard.setAttribute("id", `${id}`);
         parkCard.classList.add('park-card');
+        parkCard.setAttribute("id", `${id}`);
+        container === favContainer 
+        ? (parkCard.classList.add(hidden), parkCard.id += 'fav') 
+        : '';
+        // if (container === favContainer) {
+        //     parkCard.classList.add(hidden)
+        //     // parkCard.setAttribute("id", `${id+='fav'}`)
+        // } else {
+            // parkCard.setAttribute("id", `${id}`);
+        // }
         parkCard.innerHTML = 
         `
         <div class="img-wrapper">
@@ -163,7 +197,7 @@ const renderDOM = (array) => {
         <button class="button" data-open="${id}"><i class="fa-solid fa-heart"></i></button>
        </div>
         `
-        mainContainer.appendChild(parkCard);
+        container.appendChild(parkCard);
     });
     handleParkClick();
 }
@@ -174,7 +208,7 @@ async function fetchData (value) {
         const parkData = await response.json();
         parks = parkData.data;
         // console.log('here',parks);
-        renderDOM(parks);
+        renderDOM(parks, mainContainer);
         
     } catch (error) {
         console.error(error)
