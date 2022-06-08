@@ -126,11 +126,7 @@ ul { list-style: none; }
     margin: 0 auto;
 }
 
-.favorite-container {
-    display: flex;
-    flex-wrap: wrap;
-}
-
+.favorite-container,
 .main-parks {
     display: flex;
     flex-wrap: wrap;
@@ -258,15 +254,3 @@ button .fa-heart.favorite:hover { color: red; }
  }
 
 .fas.fa-times:hover { color: #333 }
-
-
-@media (max-width: 650px) {
-    .park-card {
-        width: 100%;
-        max-width: fit-content;
-    }
-
-    .park-card .img-wrapper {
-        max-height: max-content;
-    }
- }

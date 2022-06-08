@@ -63,16 +63,24 @@ const addToFavorites = (park) => {
     favParks.push(park);
     favoriteIds.push(park.id);
     renderDOM(favParks, favContainer);
+    // console.log('add to favs', favParks);
+    // console.log('add to favs ids', favoriteIds);
 }
 
 const addToFavoritesCheck = (parkId) => {
-    const park = findPark(parkId, parks);
-    if (favoriteIds.includes(park.id)){
+    if(favoriteIds.includes(parkId)){
         console.log('duplicate');
     } else {
+        const park = findPark(parkId, parks);
         addToFavorites(park);
-        console.log(('add to '));
     }
+    // const park = findPark(parkId, parks);
+    // if (favoriteIds.includes(park.id)){
+    //     console.log('duplicate');
+    // } else {
+        // addToFavorites(park);
+    //     console.log(('after check  '));
+    // }
 }
 
 const handleFavorite = (elm) => {
