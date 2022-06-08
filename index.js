@@ -5,12 +5,11 @@ const select = '.state-select';
 const parksContainer = '.main-parks';
 const park = '.park-card';
 const button = 'button';
+const findHeart = '.fa-heart'
 
 const modal = '.modal-container';
 const modalBg = '.park-modal';
 const modalClose = '[data-close]';
-
-
 
 const heart = 'fa-heart';
 const favorite = 'favorite';
@@ -61,46 +60,26 @@ const findPark = (parkId, array) => {
 }
 
 const addToFavorites = (park) => {
-    // console.log(park);
     favParks.push(park);
     favoriteIds.push(park.id);
-    renderDOM(favParks, favContainer)
-
+    renderDOM(favParks, favContainer);
 }
 
 const addToFavoritesCheck = (parkId) => {
     const park = findPark(parkId, parks);
-    favoriteIds.includes(park.id)
-    ? console.log('duplicate')
-    : addToFavorites(park)
-
-    // renderDOM(favParks, favContainer);
-
-    // with an array of the ids I should be able to either push those parks into a new array and call renderDOM 
-    // to create the parks in favorites, or I could use cloneNode to make a new one, and push that into an array
-
-    
-
-    console.log('favs', favoriteIds);
-    console.log('parks', favParks);
+    if (favoriteIds.includes(park.id)){
+        console.log('duplicate');
+    } else {
+        addToFavorites(park);
+        console.log(('add to '));
+    }
 }
 
 const handleFavorite = (elm) => {
     const parkId = elm.dataset.open;
-    const hearts = elm.children
-    for(const heart of hearts) {
-        heart.className.includes(favorite)
-        ? (console.log('remove from favorites'), heart.classList.remove(favorite))
-        : (addToFavoritesCheck(parkId), heart.classList.add(favorite))
-    }
-
+    addToFavoritesCheck(parkId)
 }
 
-const getFavoriteData = (elm) => {
-    elm.dataset.open === undefined
-    ? getFavoriteData(elm.parentElement)
-    : handleFavorite(elm)
-}
 
 const closeModal = () => {
     document.addEventListener('keyup', (e) => {
@@ -155,17 +134,22 @@ const findParkId = (elm) => {
     : findParkId(elm.parentElement);
 }
 
-
 const handleParkClick = () => {
     const parks = document.querySelectorAll(park);
     parks.forEach((park) => {
             park.addEventListener('click', (e) => {
+                console.log('click'); // This is logging twice for each click.
                 const elm = e.target;
-                elm.className.includes(button)
-                ? handleFavorite(elm)
-                : elm.className.includes(heart)
-                ? getFavoriteData(elm)
-                : findParkId(elm);
+                if((!elm.className.includes(button) && !elm.className.includes(heart))){
+                    findParkId(elm);
+                } else if (elm.tagName === 'I') {
+                    handleFavorite(elm.parentElement);
+                    elm.className.includes(favorite)
+                    ? (console.log('remove from favorite'), elm.classList.remove(favorite))
+                    : elm.classList.add(favorite);
+                } else {
+                    handleFavorite(elm);
+                }
         })
     })
 }
@@ -181,12 +165,6 @@ const renderDOM = (array, container) => {
         container === favContainer 
         ? (parkCard.classList.add(hidden), parkCard.id += 'fav') 
         : '';
-        // if (container === favContainer) {
-        //     parkCard.classList.add(hidden)
-        //     // parkCard.setAttribute("id", `${id+='fav'}`)
-        // } else {
-            // parkCard.setAttribute("id", `${id}`);
-        // }
         parkCard.innerHTML = 
         `
         <div class="img-wrapper">
@@ -200,6 +178,7 @@ const renderDOM = (array, container) => {
         container.appendChild(parkCard);
     });
     handleParkClick();
+    // handleFavoriteClick();
 }
 
 async function fetchData (value) {
@@ -207,7 +186,6 @@ async function fetchData (value) {
         const response = await fetch(`https://developer.nps.gov/api/v1/parks?stateCode=${ value }&api_key=2hL7WMh7PeKnrwR39LONcMrAMvibH0MiBL8QMMSH`);
         const parkData = await response.json();
         parks = parkData.data;
-        // console.log('here',parks);
         renderDOM(parks, mainContainer);
         
     } catch (error) {
