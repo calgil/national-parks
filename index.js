@@ -41,7 +41,6 @@ const displayFavParks = (show) => {
     }
 }
 
-
 favClose.addEventListener('click', () => {
     [favPage, favHeader].map((elm) => elm.classList.remove(isVisible));
     [favPage, favHeader].map((elm) => elm.classList.add(hidden));
@@ -59,33 +58,18 @@ const findPark = (parkId, array) => {
     return park
 }
 
-const addToFavorites = (park) => {
-    favParks.push(park);
-    favoriteIds.push(park.id);
-    renderDOM(favParks, favContainer);
-    // console.log('add to favs', favParks);
-    // console.log('add to favs ids', favoriteIds);
-}
-
 const addToFavoritesCheck = (parkId) => {
-    if(favoriteIds.includes(parkId)){
-        console.log('duplicate');
-    } else {
+    if(!favoriteIds.includes(parkId)){
         const park = findPark(parkId, parks);
-        addToFavorites(park);
-    }
-    // const park = findPark(parkId, parks);
-    // if (favoriteIds.includes(park.id)){
-    //     console.log('duplicate');
-    // } else {
-        // addToFavorites(park);
-    //     console.log(('after check  '));
-    // }
+        favParks.push(park);
+        favoriteIds.push(park.id);
+        renderDOM(favParks, favContainer);
+    } 
 }
 
 const handleFavorite = (elm) => {
     const parkId = elm.dataset.open;
-    addToFavoritesCheck(parkId)
+    addToFavoritesCheck(parkId);
 }
 
 
@@ -143,7 +127,7 @@ const findParkId = (elm) => {
 }
 
 const handleParkClick = () => {
-    const parks = document.querySelectorAll(park);
+    const parks = mainContainer.querySelectorAll(park);
     parks.forEach((park) => {
             park.addEventListener('click', (e) => {
                 console.log('click'); // This is logging twice for each click.
@@ -161,6 +145,29 @@ const handleParkClick = () => {
         })
     })
 }
+
+// const handleParkClick = () => {
+//     const buttons = mainContainer.querySelectorAll("button[data-open]");
+//     console.log('troubleshoot',parks);
+//     buttons.forEach((button) => {
+//             button.addEventListener('click', (e) => {
+//                 console.log('click'); // This is logging twice for each click.
+//                 const elm = e.target;
+//                 // if((!elm.className.includes(button) && !elm.className.includes(heart))){
+//                 //     findParkId(elm);
+//                 // } else 
+//                 if (elm.tagName === 'I') {
+//                     handleFavorite(elm.parentElement);
+//                     elm.className.includes(favorite)
+//                     ? (console.log('remove from favorite'), elm.classList.remove(favorite))
+//                     : elm.classList.add(favorite);
+//                 } else {
+//                     handleFavorite(elm);
+//                 }
+//         })
+//     })
+// }
+
 
 const renderDOM = (array, container) => {
     container.innerHTML = '';
