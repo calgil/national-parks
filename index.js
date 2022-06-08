@@ -148,14 +148,10 @@ const handleParkClick = () => {
 
 // const handleParkClick = () => {
 //     const buttons = mainContainer.querySelectorAll("button[data-open]");
-//     console.log('troubleshoot',parks);
 //     buttons.forEach((button) => {
 //             button.addEventListener('click', (e) => {
 //                 console.log('click'); // This is logging twice for each click.
 //                 const elm = e.target;
-//                 // if((!elm.className.includes(button) && !elm.className.includes(heart))){
-//                 //     findParkId(elm);
-//                 // } else 
 //                 if (elm.tagName === 'I') {
 //                     handleFavorite(elm.parentElement);
 //                     elm.className.includes(favorite)
