@@ -68,29 +68,26 @@ const displayFavParks = (show) => {
 }
 
 favClose.addEventListener('click', () => {
-    [favPage, favHeader].map((elm) => elm.classList.remove(isVisible));
-    [favPage, favHeader].map((elm) => elm.classList.add(hidden));
+    [favContainer, favPage, favHeader].map((elm) => elm.classList.remove(isVisible));
+    [favContainer, favPage, favHeader].map((elm) => elm.classList.add(hidden));
     displayFavParks(false);
 });
 
 const changeHearColor = () => {
-        const hearts = favContainer.querySelectorAll(findHeart);
-        console.log('change color', hearts);
-        for(const heart of hearts) {
-            console.log('heart', heart);
-            // if (!heart.className.includes(favorite)){
-            //     heart.classList.add(favorite);
-            // }
-        }
+    const hearts = favContainer.querySelectorAll(findHeart);
+    hearts.forEach((heart) => { 
+         (!heart.className.includes(favorite)) && heart.classList.add(favorite);
+    })
 }
 
 favOpen.addEventListener('click', () => {
-    [favPage, favHeader].map((elm) => elm.classList.add(isVisible));
-    [favPage, favHeader].map((elm) => elm.classList.remove(hidden));
+    [favContainer, favPage, favHeader].map((elm) => elm.classList.add(isVisible));
+    [favContainer, favPage, favHeader].map((elm) => elm.classList.remove(hidden));
     displayFavParks(true);
     handleParkClick(favContainer);
-    // changeHearColor();
     renderDOM(favParks.flat(), favContainer);
+    changeHearColor();
+    handleParkClick(favContainer);
 })
 
 const findPark = (parkId, array) => {
@@ -98,22 +95,19 @@ const findPark = (parkId, array) => {
     return park
 }
 
-const addToFavoritesCheck = (parkId) => {
+const addToFavoritesCheck = (parkId, park) => {
     if(!favoriteIds.includes(parkId)){
-        const park = findPark(parkId, parks);
+        // const park = findPark(parkId, parks);
         const index = parks.findIndex((park) => park.id === parkId);
         const newFav = parks.slice(index, (index + 1))
-        console.log('new', newFav);
         favoriteIds.push(park.id);
         favParks.push(newFav);
-        console.log('add', favParks);
-        console.log('add parks', parks);
     } 
 }
 
-const handleFavorite = (elm) => {
+const handleFavorite = (elm, park) => {
     const parkId = elm.dataset.open;
-    addToFavoritesCheck(parkId);
+    addToFavoritesCheck(parkId, park);
 }
 
 const closeModal = () => {
@@ -169,6 +163,10 @@ const findParkId = (elm) => {
     : findParkId(elm.parentElement);
 }
 
+const removeFromFavorite = (park) => {
+    console.log('remove', park);
+}
+
 const handleParkClick = (container) => {
     const parks = container.querySelectorAll(park);
     parks.forEach((park) => {
@@ -177,12 +175,12 @@ const handleParkClick = (container) => {
                 if((!elm.className.includes(button) && !elm.className.includes(heart))){
                     findParkId(elm);
                 } else if (elm.tagName === 'I') {
-                    handleFavorite(elm.parentElement);
+                    handleFavorite(elm.parentElement, park);
                     elm.className.includes(favorite)
-                    ? (console.log('remove from favorite'), elm.classList.remove(favorite))
+                    ? (removeFromFavorite(park) , elm.classList.remove(favorite))
                     : elm.classList.add(favorite);
                 } else {
-                    handleFavorite(elm);
+                    handleFavorite(elm, park);
                 }
         })
     })

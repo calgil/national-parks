@@ -34,10 +34,13 @@ ul { list-style: none; }
     background-repeat: no-repeat;
     background-size: cover;
     font-size: 1.125rem;
-    transition: all 0.3s;
+    transition: all 0.4s ease-in;
+    height: 60vh;
 }
 
-section.hero-bg.initial { height: 100vh; }
+section.hero-bg.initial { 
+    height: 100vh;
+ }
 
 
 .navbar {
@@ -135,6 +138,13 @@ section.hero-bg.initial { height: 100vh; }
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
+}
+
+ .favorite-container.hidden {
+    padding: 0;
+}
+
+.main-parks {
     padding-top: 2rem;
     padding-bottom: 5rem;
 }
