@@ -81,6 +81,31 @@ const changeHearColor = () => {
     })
 }
 
+const updateHearts = (parkId) => {
+    const button = mainContainer.querySelector(`button[data-open='${parkId}']`);
+    for (const heart of button.children) {
+        if (heart.className.includes(favorite)){
+            heart.classList.remove(favorite);
+        }
+    }
+}
+
+const handleFavoriteClick = () => {
+    const hearts = favContainer.querySelectorAll(button);
+    hearts.forEach((heart) => {
+        heart.classList.add(favorite);
+        heart.addEventListener('click', (e) => {
+            const parkId = e.target.parentElement.dataset.open
+            updateHearts(parkId);
+            const park = findPark(parkId, favParks);
+            removeFromFavorite(parkId);
+            renderDOM(favParks, favContainer);
+            changeHearColor();
+            handleFavoriteClick();
+        })
+    })
+}
+
 favOpen.addEventListener('click', () => {
     [favContainer, favPage, favHeader].map((elm) => elm.classList.add(isVisible));
     [favContainer, favPage, favHeader].map((elm) => elm.classList.remove(hidden));
@@ -88,8 +113,7 @@ favOpen.addEventListener('click', () => {
     handleParkClick(favContainer);
     renderDOM(favParks, favContainer);
     changeHearColor();
-    // handleParkClick(favContainer);
-    // I'm considering using a different function here to handle the nonsense
+    handleFavoriteClick();
 })
 
 const findPark = (parkId, array) => {
@@ -99,12 +123,8 @@ const findPark = (parkId, array) => {
 
 const addToFavoritesCheck = (parkId, park) => {
     if(!favoriteIds.includes(parkId)){
-        const index = parks.findIndex((park) => park.id === parkId);
-        console.log('parks above', parks);
-        const newFav = parks.slice(index, (index + 1));
-        console.log('parks below', parks);
-        newFav[0].id += 'fav';
-        favoriteIds.push(park.id);
+        const newFav = parks.filter((park) => park.id === parkId);
+        favoriteIds.push(newFav[0].id);
         favParks.push(newFav[0]);
     } 
 }
@@ -164,39 +184,19 @@ const modalOpen = (parkId) => {
 }
 
 const findParkId = (elm) => {
-    // console.log('find', elm);
+    console.log('find', elm);
     if(elm.className.includes('park-card')) {
-        console.log('park', elm.id);
-        console.log('parks', parks);
-
         modalOpen(elm.id);
     } else {
         findParkId(elm.parentElement);
     }
 }
 
-// I only want this to be triggered from the favOpen function
-const updateHearts = (parkId) => {
-    const button = mainContainer.querySelector(`button[data-open='${parkId}']`);
-    for (const heart of button.children) {
-        if (heart.className.includes(favorite)){
-            heart.classList.remove(favorite);
-            console.log('heart', heart );
-        }
-    }
-}
-
-// This function is called by handleParkClick
-
-const removeFromFavorite = (park) => {
-    console.log('remove');
-    const parkId = park.id
+const removeFromFavorite = (parkId) => {
     const i = favParks.findIndex((park) => park.id === parkId);
     favParks.splice(i, 1);
     const index = favoriteIds.findIndex((park) => park.id === parkId);
     favoriteIds.splice(index, 1);
-    console.log('remove array', favParks);
-    console.log('fav ids', favoriteIds);
 }
 
 const handleParkClick = (container) => {
@@ -208,7 +208,7 @@ const handleParkClick = (container) => {
                     findParkId(elm);
                 } else if (elm.tagName === 'I' ) {
                     elm.className.includes(favorite)
-                    ? (removeFromFavorite(park) , elm.classList.remove(favorite))
+                    ? (removeFromFavorite(park.id) , elm.classList.remove(favorite))
                     : (handleFavorite(elm.parentElement, park), elm.classList.add(favorite));
                 } else {
                     handleFavorite(elm, park);
