@@ -20,7 +20,8 @@ const favoriteSection = '.favorite-section';
 const favoriteHeader = '.fav-header';
 const favoriteContainer = '.favorite-container';
 
-const heroBg = document.querySelector('.initial');
+const body = document.querySelector('body');
+const heroBg = document.querySelector('.hero-bg.initial');
 
 const stateSelect = document.querySelector(select);
 const mainContainer = document.querySelector(parksContainer);
@@ -85,9 +86,10 @@ favOpen.addEventListener('click', () => {
     [favContainer, favPage, favHeader].map((elm) => elm.classList.remove(hidden));
     displayFavParks(true);
     handleParkClick(favContainer);
-    renderDOM(favParks.flat(), favContainer);
+    renderDOM(favParks, favContainer);
     changeHearColor();
-    handleParkClick(favContainer);
+    // handleParkClick(favContainer);
+    // I'm considering using a different function here to handle the nonsense
 })
 
 const findPark = (parkId, array) => {
@@ -97,13 +99,17 @@ const findPark = (parkId, array) => {
 
 const addToFavoritesCheck = (parkId, park) => {
     if(!favoriteIds.includes(parkId)){
-        // const park = findPark(parkId, parks);
         const index = parks.findIndex((park) => park.id === parkId);
-        const newFav = parks.slice(index, (index + 1))
+        console.log('parks above', parks);
+        const newFav = parks.slice(index, (index + 1));
+        console.log('parks below', parks);
+        newFav[0].id += 'fav';
         favoriteIds.push(park.id);
-        favParks.push(newFav);
+        favParks.push(newFav[0]);
     } 
 }
+
+// I can probably get rid of this function and do this above
 
 const handleFavorite = (elm, park) => {
     const parkId = elm.dataset.open;
@@ -158,13 +164,39 @@ const modalOpen = (parkId) => {
 }
 
 const findParkId = (elm) => {
-    elm.className.includes('park-card')
-    ? modalOpen(elm.id)
-    : findParkId(elm.parentElement);
+    // console.log('find', elm);
+    if(elm.className.includes('park-card')) {
+        console.log('park', elm.id);
+        console.log('parks', parks);
+
+        modalOpen(elm.id);
+    } else {
+        findParkId(elm.parentElement);
+    }
 }
 
+// I only want this to be triggered from the favOpen function
+const updateHearts = (parkId) => {
+    const button = mainContainer.querySelector(`button[data-open='${parkId}']`);
+    for (const heart of button.children) {
+        if (heart.className.includes(favorite)){
+            heart.classList.remove(favorite);
+            console.log('heart', heart );
+        }
+    }
+}
+
+// This function is called by handleParkClick
+
 const removeFromFavorite = (park) => {
-    console.log('remove', park);
+    console.log('remove');
+    const parkId = park.id
+    const i = favParks.findIndex((park) => park.id === parkId);
+    favParks.splice(i, 1);
+    const index = favoriteIds.findIndex((park) => park.id === parkId);
+    favoriteIds.splice(index, 1);
+    console.log('remove array', favParks);
+    console.log('fav ids', favoriteIds);
 }
 
 const handleParkClick = (container) => {
@@ -174,11 +206,10 @@ const handleParkClick = (container) => {
                 const elm = e.target;
                 if((!elm.className.includes(button) && !elm.className.includes(heart))){
                     findParkId(elm);
-                } else if (elm.tagName === 'I') {
-                    handleFavorite(elm.parentElement, park);
+                } else if (elm.tagName === 'I' ) {
                     elm.className.includes(favorite)
                     ? (removeFromFavorite(park) , elm.classList.remove(favorite))
-                    : elm.classList.add(favorite);
+                    : (handleFavorite(elm.parentElement, park), elm.classList.add(favorite));
                 } else {
                     handleFavorite(elm, park);
                 }
@@ -192,7 +223,7 @@ async function fetchData (value) {
         const parkData = await response.json();
         parks = parkData.data;
         renderDOM(parks, mainContainer);
-        heroBg.classList.remove('initial');
+        [body, heroBg].map((elm) => elm.classList.remove('initial'))
         handleParkClick(mainContainer);
         
     } catch (error) {

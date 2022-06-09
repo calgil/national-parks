@@ -8,6 +8,8 @@
 
 } */
 
+body.initial { overflow: hidden; }
+
 body{
     margin: 0;
     font-family: "Inter", sans-serif;
@@ -16,7 +18,9 @@ body{
     line-height: 1.5;
     color: #eee;
     background-color: #eee;
+    overflow: initial;
 }
+
 
 .container {
     width: 100%;
