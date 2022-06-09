@@ -34,7 +34,11 @@ ul { list-style: none; }
     background-repeat: no-repeat;
     background-size: cover;
     font-size: 1.125rem;
+    transition: all 0.3s;
 }
+
+section.hero-bg.initial { height: 100vh; }
+
 
 .navbar {
     display: flex;

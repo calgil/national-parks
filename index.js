@@ -1,3 +1,5 @@
+const initial = 'initial';
+
 const isVisible = 'is-visible';
 const hidden = 'hidden';
 
@@ -18,6 +20,8 @@ const favoriteSection = '.favorite-section';
 const favoriteHeader = '.fav-header';
 const favoriteContainer = '.favorite-container';
 
+const heroBg = document.querySelector('.initial');
+
 const stateSelect = document.querySelector(select);
 const mainContainer = document.querySelector(parksContainer);
 const modalContainer = document.querySelector(modal);
@@ -32,6 +36,28 @@ let parks = [];
 let favParks = [];
 let favoriteIds = [];
 
+const renderDOM = (array, container) => {
+    container.innerHTML = '';
+    array.forEach((park) => {
+        const {id, fullName} = park;
+        const {altText, url} =park.images[0];
+        const parkCard = document.createElement('div');
+        parkCard.classList.add('park-card');
+        parkCard.setAttribute("id", `${id}`);
+        parkCard.innerHTML = 
+        `
+        <div class="img-wrapper">
+        <img class="park-img" src="${url}" alt="${altText}">
+        </div>
+       <div class="park-text">
+        <h4>${fullName}</h4>
+        <button class="button" data-open="${id}"><i class="fa-solid fa-heart"></i></button>
+       </div>
+        `
+        container.appendChild(parkCard);
+    });
+}
+
 const displayFavParks = (show) => {
     const favParks = favContainer.children
     for(const park of favParks) {
@@ -45,12 +71,26 @@ favClose.addEventListener('click', () => {
     [favPage, favHeader].map((elm) => elm.classList.remove(isVisible));
     [favPage, favHeader].map((elm) => elm.classList.add(hidden));
     displayFavParks(false);
-})
+});
+
+const changeHearColor = () => {
+        const hearts = favContainer.querySelectorAll(findHeart);
+        console.log('change color', hearts);
+        for(const heart of hearts) {
+            console.log('heart', heart);
+            // if (!heart.className.includes(favorite)){
+            //     heart.classList.add(favorite);
+            // }
+        }
+}
 
 favOpen.addEventListener('click', () => {
     [favPage, favHeader].map((elm) => elm.classList.add(isVisible));
     [favPage, favHeader].map((elm) => elm.classList.remove(hidden));
     displayFavParks(true);
+    handleParkClick(favContainer);
+    // changeHearColor();
+    renderDOM(favParks.flat(), favContainer);
 })
 
 const findPark = (parkId, array) => {
@@ -61,9 +101,13 @@ const findPark = (parkId, array) => {
 const addToFavoritesCheck = (parkId) => {
     if(!favoriteIds.includes(parkId)){
         const park = findPark(parkId, parks);
-        favParks.push(park);
+        const index = parks.findIndex((park) => park.id === parkId);
+        const newFav = parks.slice(index, (index + 1))
+        console.log('new', newFav);
         favoriteIds.push(park.id);
-        renderDOM(favParks, favContainer);
+        favParks.push(newFav);
+        console.log('add', favParks);
+        console.log('add parks', parks);
     } 
 }
 
@@ -71,7 +115,6 @@ const handleFavorite = (elm) => {
     const parkId = elm.dataset.open;
     addToFavoritesCheck(parkId);
 }
-
 
 const closeModal = () => {
     document.addEventListener('keyup', (e) => {
@@ -126,11 +169,10 @@ const findParkId = (elm) => {
     : findParkId(elm.parentElement);
 }
 
-const handleParkClick = () => {
-    const parks = mainContainer.querySelectorAll(park);
+const handleParkClick = (container) => {
+    const parks = container.querySelectorAll(park);
     parks.forEach((park) => {
             park.addEventListener('click', (e) => {
-                console.log('click'); // This is logging twice for each click.
                 const elm = e.target;
                 if((!elm.className.includes(button) && !elm.className.includes(heart))){
                     findParkId(elm);
@@ -146,58 +188,14 @@ const handleParkClick = () => {
     })
 }
 
-// const handleParkClick = () => {
-//     const buttons = mainContainer.querySelectorAll("button[data-open]");
-//     buttons.forEach((button) => {
-//             button.addEventListener('click', (e) => {
-//                 console.log('click'); // This is logging twice for each click.
-//                 const elm = e.target;
-//                 if (elm.tagName === 'I') {
-//                     handleFavorite(elm.parentElement);
-//                     elm.className.includes(favorite)
-//                     ? (console.log('remove from favorite'), elm.classList.remove(favorite))
-//                     : elm.classList.add(favorite);
-//                 } else {
-//                     handleFavorite(elm);
-//                 }
-//         })
-//     })
-// }
-
-
-const renderDOM = (array, container) => {
-    container.innerHTML = '';
-    array.forEach((park) => {
-        const {id, fullName} = park;
-        const {altText, url} =park.images[0];
-        const parkCard = document.createElement('div');
-        parkCard.classList.add('park-card');
-        parkCard.setAttribute("id", `${id}`);
-        container === favContainer 
-        ? (parkCard.classList.add(hidden), parkCard.id += 'fav') 
-        : '';
-        parkCard.innerHTML = 
-        `
-        <div class="img-wrapper">
-        <img class="park-img" src="${url}" alt="${altText}">
-        </div>
-       <div class="park-text">
-        <h4>${fullName}</h4>
-        <button class="button" data-open="${id}"><i class="fa-solid fa-heart"></i></button>
-       </div>
-        `
-        container.appendChild(parkCard);
-    });
-    handleParkClick();
-    // handleFavoriteClick();
-}
-
 async function fetchData (value) {
     try {
         const response = await fetch(`https://developer.nps.gov/api/v1/parks?stateCode=${ value }&api_key=2hL7WMh7PeKnrwR39LONcMrAMvibH0MiBL8QMMSH`);
         const parkData = await response.json();
         parks = parkData.data;
         renderDOM(parks, mainContainer);
+        heroBg.classList.remove('initial');
+        handleParkClick(mainContainer);
         
     } catch (error) {
         console.error(error)
@@ -208,4 +206,3 @@ stateSelect.addEventListener('change', (e) => {
     const value = e.target.value.toLowerCase();
     fetchData(value);
 });
-
