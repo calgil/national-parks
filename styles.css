@@ -276,3 +276,19 @@ button .fa-heart.favorite:hover { color: red; }
  }
 
 .fas.fa-times:hover { color: #333 }
+
+@media  screen and (max-width: 500px) {
+    .modal-body { flex-direction: column; }
+
+    .modal-img-wrapper {
+        max-width: 4000px;
+        height: 300px;
+        margin: 0 auto;
+    }
+
+    .description {
+        max-height: 150px;
+        overflow: scroll;
+        margin-top: 2rem;
+    }
+}
