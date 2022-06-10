@@ -278,7 +278,10 @@ button .fa-heart.favorite:hover { color: red; }
 .fas.fa-times:hover { color: #333 }
 
 @media  screen and (max-width: 500px) {
-    .modal-body { flex-direction: column; }
+    .modal-body { 
+        flex-direction: column;
+        overflow: hidden;
+     }
 
     .modal-img-wrapper {
         max-width: 4000px;
@@ -289,6 +292,6 @@ button .fa-heart.favorite:hover { color: red; }
     .description {
         max-height: 150px;
         overflow: scroll;
-        margin-top: 2rem;
+        margin-top: 0.5rem;
     }
 }
